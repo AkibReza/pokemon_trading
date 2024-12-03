@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Authenticate</title>
+    <link rel="stylesheet" href="css/style-auth.css" />
+  </head>
+  <body>
+    <div class="auth-container">
+      <h1>Authentication</h1>
+
+      <form id="signUpForm">
+        <h2>Sign Up</h2>
+        <label for="signup-username">Username:</label>
+        <input type="text" id="signup-username" name="username" required />
+
+        <label for="signup-password">Password:</label>
+        <input type="password" id="signup-password" name="password" required />
+
+        <button type="submit">Sign Up</button>
+        <div id="signup-error" class="error"></div>
+        <div id="signupMessage"></div>
+      </form>
+
+      <form id="signInForm">
+        <h2>Sign In</h2>
+        <label for="signin-username">Username:</label>
+        <input type="text" id="signin-username" name="username" required />
+
+        <label for="signin-password">Password:</label>
+        <input type="password" id="signin-password" name="password" required />
+
+        <button type="submit">Sign In</button>
+        <div id="signin-error" class="error"></div>
+      </form>
+    </div>
+
+    <script src="js/auth-handler.js"></script>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Pokémon Card</title>
+    <link rel="stylesheet" href="css/style-index.css" />
+  </head>
+  <body>
+    <header>
+      <nav class="nav-bar">
+        <button
+          id="signInButton"
+          onclick="window.location.href='authenticate.html?action=signin'"
+          class="auth-button"
+        >
+          Sign In
+        </button>
+        <button
+          id="signUpButton"
+          onclick="window.location.href='authenticate.html?action=signup'"
+          class="auth-button"
+        >
+          Sign Up
+        </button>
+        <button
+          id="signOutButton"
+          class="auth-button"
+          style="display: none"
+          onclick="signOut()"
+        >
+          Sign Out
+        </button>
+      </nav>
+    </header>
+
+    <div class="container">
+      <h1>Add a Pokémon Card</h1>
+      <form id="cardForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="image_url">Image URL:</label>
+        <input type="text" id="image_url" name="image_url" />
+
+        <label for="health">Health:</label>
+        <input type="number" id="health" name="health" required />
+
+        <label for="power">Power:</label>
+        <input type="number" id="power" name="power" required />
+
+        <label for="type">Type:</label>
+        <input type="text" id="type" name="type" required />
+
+        <button type="button" onclick="submitForm()">Submit</button>
+      </form>
+      <button type="button" onclick="window.location.href='display.html'">
+        View Pokémon Cards
+      </button>
+      <div id="responseMessage"></div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const username = localStorage.getItem("username");
+        if (username) {
+          document.getElementById("signInButton").style.display = "none";
+          document.getElementById("signUpButton").style.display = "none";
+          document.getElementById("signOutButton").style.display =
+            "inline-block";
+        }
+      });
+
+      function signOut() {
+        localStorage.clear();
+        window.location.reload();
+      }
+    </script>
+    <script src="js/form-handler.js"></script>
+  </body>
+</html>

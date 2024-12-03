@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Cards</title>
+    <link rel="stylesheet" href="css/style-display.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Pokémon Cards</h1>
+      <div class="filter-sort">
+        <input type="text" id="searchInput" placeholder="Search by Name" />
+        <select id="typeFilter">
+          <option value="">All Types</option>
+          <option value="Fire">Fire</option>
+          <option value="Water">Water</option>
+          <option value="Electric">Electric</option>
+          <option value="Grass">Grass</option>
+          <option value="Ice">Ice</option>
+          <option value="Ground">Ground</option>
+          <option value="Dark">Dark</option>
+          <option value="Psychic">Psychic</option>
+        </select>
+        <select id="sortOption">
+          <option value="name">Name</option>
+          <option value="health">Health</option>
+          <option value="power">Power</option>
+          <option value="type">Type</option>
+        </select>
+        <button id="applyFiltersBtn">Apply Filters</button>
+      </div>
+      <button onclick="window.location.href='index.html'">
+        Add New Pokémon
+      </button>
+      <table id="pokemonTable">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Health</th>
+            <th>Power</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="cardContainer"></tbody>
+      </table>
+    </div>
+    <div id="editModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit Pokémon Card</h2>
+        <form id="editForm">
+          <input type="hidden" id="editId" />
+          <label for="editName">Name:</label>
+          <input type="text" id="editName" required />
+
+          <label for="editHealth">Health:</label>
+          <input type="number" id="editHealth" required />
+
+          <label for="editPower">Power:</label>
+          <input type="number" id="editPower" required />
+
+          <label for="editType">Type:</label>
+          <input type="text" id="editType" required />
+
+          <button type="button" onclick="submitEdit()">Save Changes</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="js/card-handler.js" defer></script>
+  </body>
+</html>
