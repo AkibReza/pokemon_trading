@@ -1,85 +1,151 @@
-body {
-  font-family: Arial, sans-serif;
+/* General Reset */
+* {
   margin: 0;
   padding: 0;
-  background-color: #f4f4f4;
+  box-sizing: border-box;
 }
 
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #121212; /* Dark background */
+  color: #fffefe; /* Light text for contrast */
+  margin: 0;
+  padding: 0;
+  background: url("../images/pokemonBackground2.jpg") no-repeat center center
+    fixed;
+  background-size: cover;
+}
+
+/* Navigation Bar */
 .nav-bar {
   display: flex;
   justify-content: flex-end;
-  padding: 20px;
-  background-color: #007bff;
+  padding: 15px 20px;
+  background-color: #333;
+  border-bottom: 1px solid #333;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .auth-button {
   margin-left: 15px;
   padding: 10px 20px;
-  border: none;
-  background-color: #ffffff;
-  color: #007bff;
+  border: 2px solid #00adb5;
+  background-color: transparent;
+  color: #f7ffff;
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s;
 }
 
 .auth-button:hover {
-  background-color: #0056b3;
-  color: white;
+  background-color: #00adb5;
+  color: #121212;
+  transform: translateY(-2px);
 }
 
+/* Container */
 .container {
   max-width: 500px;
   margin: 50px auto;
   padding: 30px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #666; /* Slightly lighter dark for contrast */
+  border-radius: 10px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
   text-align: center;
-  color: #333;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #f0feff;
+  border-bottom: 2px solid #00adb5;
+  display: inline-block;
+  padding-bottom: 5px;
 }
 
+/* Form Styling */
 form label {
   display: block;
-  margin: 15px 0 5px;
+  margin-top: 15px;
   font-weight: bold;
-  color: #555;
+  font-size: 0.9rem;
+  color: #e0e0e0;
 }
 
 form input {
   width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
+  padding: 12px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 2px solid #444;
   border-radius: 5px;
-  box-sizing: border-box;
-  font-size: 14px;
+  background-color: #555;
+  color: #fffefe;
+  font-size: 1rem;
 }
 
+form input:focus {
+  outline: none;
+  border-color: #ddeaeb;
+  background-color: #292929;
+}
+
+/* Buttons */
 button[type="button"],
 button[type="submit"] {
   width: 100%;
   padding: 12px;
-  margin-top: 20px;
-  background-color: #007bff;
-  color: white;
+  margin-top: 10px;
+  background-color: #00adb5;
+  color: #121212;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button[type="button"]:hover,
 button[type="submit"]:hover {
-  background-color: #0056b3;
+  background-color: #007bff;
+  transform: translateY(-2px);
 }
 
+/* Response Message */
 #responseMessage {
   margin-top: 20px;
-  font-size: 16px;
-  color: #555;
+  font-size: 1rem;
   text-align: center;
+  color: #f05454;
+}
+
+/* View Cards Button */
+button[type="button"]:last-of-type {
+  background-color: transparent;
+  color: #feffff;
+  border: 2px solid #00adb5;
+}
+
+button[type="button"]:last-of-type:hover {
+  background-color: #00adb5;
+  color: #fffdfd;
+}
+
+/* Media Queries */
+@media (max-width: 600px) {
+  .container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  button {
+    font-size: 0.9rem;
+  }
 }
