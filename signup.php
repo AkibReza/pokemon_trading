@@ -22,8 +22,8 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $signup_username)) {
     die("Error: Username can only contain letters, numbers, and underscores.");
 }
 
-if (strlen($signup_password) < 8) {
-    die("Error: Password must be at least 8 characters long.");
+if (strlen($signup_password) < 5) {
+    die("Error: Password must be at least 5 characters long.");
 }
 
 // Check for duplicate usernames

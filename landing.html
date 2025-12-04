@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Trading Collection</title>
+    <link rel="stylesheet" href="css/style-landing.css" />
+  </head>
+  <body>
+    <div class="landing-container">
+      <div class="hero-section">
+        <div class="logo-container">
+          <h1 class="main-title">Pokémon Trading Collection</h1>
+          <p class="subtitle">Build and manage your ultimate Pokémon card collection</p>
+        </div>
+        
+        <div class="action-buttons">
+          <button onclick="window.location.href='authenticate.html?mode=signin'" class="primary-btn">
+            Sign In
+          </button>
+          <button onclick="window.location.href='authenticate.html?mode=signup'" class="secondary-btn">
+            Create Account
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Check if user is already logged in
+      document.addEventListener("DOMContentLoaded", function () {
+        const username = localStorage.getItem("username");
+        if (username) {
+          // Redirect to display page if already logged in
+          window.location.href = "display.html";
+        }
+      });
+    </script>
+  </body>
+</html>

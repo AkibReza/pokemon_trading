@@ -7,72 +7,144 @@
     <link rel="stylesheet" href="css/style-index.css" />
   </head>
   <body>
-    <header>
-      <nav class="nav-bar">
-        <button
-          id="signInButton"
-          onclick="window.location.href='authenticate.html?action=signin'"
-          class="auth-button"
-        >
-          Sign In
-        </button>
-        <button
-          id="signUpButton"
-          onclick="window.location.href='authenticate.html?action=signup'"
-          class="auth-button"
-        >
-          Sign Up
-        </button>
-        <button
-          id="signOutButton"
-          class="auth-button"
-          style="display: none"
-          onclick="signOut()"
-        >
-          Sign Out
-        </button>
-      </nav>
-    </header>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-content">
+        <h1 class="nav-logo">Pokémon Collection</h1>
+        <div class="nav-actions">
+          <span class="user-welcome" id="userWelcome"></span>
+          <button onclick="window.location.href='display.html'" class="nav-btn">
+            View Collection
+          </button>
+          <button onclick="signOut()" class="nav-btn signout-btn">
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </nav>
 
-    <div class="container">
-      <h1>Add a Pokémon Card</h1>
-      <form id="cardForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required />
+    <div class="main-container">
+      <div class="form-wrapper">
+        <div class="form-header">
+          <h1>Add a New Pokémon Card</h1>
+          <p>Fill in the details to add a card to your collection</p>
+        </div>
 
-        <label for="image_url">Image URL:</label>
-        <input type="text" id="image_url" name="image_url" />
+        <form id="cardForm" class="pokemon-form">
+          <div class="form-group">
+            <label for="name">Pokémon Name</label>
+            <input 
+              type="text" 
+              id="name" 
+              name="name" 
+              placeholder="e.g., Pikachu"
+              required 
+            />
+          </div>
 
-        <label for="health">Health:</label>
-        <input type="number" id="health" name="health" required />
+          <div class="form-group">
+            <label for="image_file">Upload Image</label>
+            <input 
+              type="file" 
+              id="image_file" 
+              name="image_file" 
+              accept="image/*"
+              onchange="previewImage(event)"
+            />
+            <small>Supported formats: JPG, PNG, GIF (Max 5MB)</small>
+            <div id="imagePreview" class="image-preview"></div>
+          </div>
 
-        <label for="power">Power:</label>
-        <input type="number" id="power" name="power" required />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="health">Health (HP)</label>
+              <input 
+                type="number" 
+                id="health" 
+                name="health" 
+                placeholder="100"
+                min="1"
+                required 
+              />
+            </div>
 
-        <label for="type">Type:</label>
-        <input type="text" id="type" name="type" required />
+            <div class="form-group">
+              <label for="power">Power</label>
+              <input 
+                type="number" 
+                id="power" 
+                name="power" 
+                placeholder="50"
+                min="1"
+                required 
+              />
+            </div>
+          </div>
 
-        <button type="button" onclick="submitForm()">Submit</button>
-      </form>
-      <button type="button" onclick="window.location.href='display.html'">
-        View Pokémon Cards
-      </button>
-      <div id="responseMessage"></div>
+          <div class="form-group">
+            <label for="type">Type</label>
+            <select id="type" name="type" required>
+              <option value="">Select a type</option>
+              <option value="Fire">🔥 Fire</option>
+              <option value="Water">💧 Water</option>
+              <option value="Electric">⚡ Electric</option>
+              <option value="Grass">🌿 Grass</option>
+              <option value="Ice">❄️ Ice</option>
+              <option value="Ground">🏔️ Ground</option>
+              <option value="Dark">🌑 Dark</option>
+              <option value="Psychic">🔮 Psychic</option>
+              <option value="Fighting">🥊 Fighting</option>
+              <option value="Dragon">🐉 Dragon</option>
+              <option value="Normal">⭐ Normal</option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" onclick="submitForm()" class="submit-btn">
+              Add Pokémon
+            </button>
+            <button 
+              type="button" 
+              onclick="window.location.href='display.html'" 
+              class="cancel-btn"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+
+        <div id="responseMessage" class="response-message"></div>
+      </div>
     </div>
+
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const username = localStorage.getItem("username");
-        if (username) {
-          document.getElementById("signInButton").style.display = "none";
-          document.getElementById("signUpButton").style.display = "none";
-          document.getElementById("signOutButton").style.display =
-            "inline-block";
+        if (!username) {
+          window.location.href = "landing.html";
+        } else {
+          document.getElementById("userWelcome").textContent = `Welcome, ${username}!`;
         }
       });
 
       function signOut() {
         localStorage.clear();
-        window.location.reload();
+        window.location.href = "landing.html";
+      }
+
+      function previewImage(event) {
+        const previewDiv = document.getElementById('imagePreview');
+        const file = event.target.files[0];
+        
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewDiv.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin-top: 10px;">`;
+          }
+          reader.readAsDataURL(file);
+        } else {
+          previewDiv.innerHTML = '';
+        }
       }
     </script>
     <script src="js/form-handler.js"></script>

@@ -3,73 +3,156 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pokémon Cards</title>
+    <title>Pokémon Collection</title>
     <link rel="stylesheet" href="css/style-display.css" />
+    <!-- Anime.js for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
   </head>
   <body>
-    <div class="container">
-      <h1>Pokémon Cards</h1>
-      <div class="filter-sort">
-        <input type="text" id="searchInput" placeholder="Search by Name" />
-        <select id="typeFilter">
-          <option value="">All Types</option>
-          <option value="Fire">Fire</option>
-          <option value="Water">Water</option>
-          <option value="Electric">Electric</option>
-          <option value="Grass">Grass</option>
-          <option value="Ice">Ice</option>
-          <option value="Ground">Ground</option>
-          <option value="Dark">Dark</option>
-          <option value="Psychic">Psychic</option>
-        </select>
-        <select id="sortOption">
-          <option value="name">Name</option>
-          <option value="health">Health</option>
-          <option value="power">Power</option>
-          <option value="type">Type</option>
-        </select>
-        <button id="applyFiltersBtn">Apply Filters</button>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-content">
+        <h1 class="nav-logo">Pokémon Collection</h1>
+        <div class="nav-actions">
+          <span class="user-welcome" id="userWelcome"></span>
+          <button onclick="window.location.href='index.html'" class="nav-btn add-btn">
+            + Add Pokémon
+          </button>
+          <button onclick="signOut()" class="nav-btn signout-btn">
+            Sign Out
+          </button>
+        </div>
       </div>
-      <button onclick="window.location.href='index.html'">
-        Add New Pokémon
-      </button>
-      <table id="pokemonTable">
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Health</th>
-            <th>Power</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="cardContainer"></tbody>
-      </table>
+    </nav>
+
+    <div class="main-container">
+      <!-- Filter Section -->
+      <div class="filter-section">
+        <div class="search-box">
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="🔍 Search by name..." 
+            class="search-input"
+          />
+        </div>
+        
+        <div class="filter-controls">
+          <div class="filter-group">
+            <label>Type:</label>
+            <select id="typeFilter" class="filter-select">
+              <option value="">All Types</option>
+              <option value="Fire">🔥 Fire</option>
+              <option value="Water">💧 Water</option>
+              <option value="Electric">⚡ Electric</option>
+              <option value="Grass">🌿 Grass</option>
+              <option value="Ice">❄️ Ice</option>
+              <option value="Ground">🏔️ Ground</option>
+              <option value="Dark">🌑 Dark</option>
+              <option value="Psychic">🔮 Psychic</option>
+              <option value="Fighting">🥊 Fighting</option>
+              <option value="Dragon">🐉 Dragon</option>
+              <option value="Normal">⭐ Normal</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label>Sort by:</label>
+            <select id="sortOption" class="filter-select">
+              <option value="name">Name</option>
+              <option value="health">Health</option>
+              <option value="power">Power</option>
+              <option value="type">Type</option>
+            </select>
+          </div>
+          
+          <button id="applyFiltersBtn" class="apply-btn">Apply Filters</button>
+        </div>
+      </div>
+
+      <!-- Cards Grid -->
+      <div class="cards-grid" id="cardContainer">
+        <!-- Cards will be dynamically inserted here -->
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-icon">📦</div>
+        <h2>No Pokémon Cards Found</h2>
+        <p>Start building your collection by adding new Pokémon cards!</p>
+        <button onclick="window.location.href='index.html'" class="empty-btn">
+          Add Your First Card
+        </button>
+      </div>
     </div>
+
+    <!-- Edit Modal -->
     <div id="editModal" class="modal">
       <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Edit Pokémon Card</h2>
+        <div class="modal-header">
+          <h2>Edit Pokémon Card</h2>
+          <span class="close">&times;</span>
+        </div>
         <form id="editForm">
           <input type="hidden" id="editId" />
-          <label for="editName">Name:</label>
-          <input type="text" id="editName" required />
+          
+          <div class="form-group">
+            <label for="editName">Name:</label>
+            <input type="text" id="editName" required />
+          </div>
 
-          <label for="editHealth">Health:</label>
-          <input type="number" id="editHealth" required />
+          <div class="form-row">
+            <div class="form-group">
+              <label for="editHealth">Health:</label>
+              <input type="number" id="editHealth" required />
+            </div>
 
-          <label for="editPower">Power:</label>
-          <input type="number" id="editPower" required />
+            <div class="form-group">
+              <label for="editPower">Power:</label>
+              <input type="number" id="editPower" required />
+            </div>
+          </div>
 
-          <label for="editType">Type:</label>
-          <input type="text" id="editType" required />
+          <div class="form-group">
+            <label for="editType">Type:</label>
+            <select id="editType" required>
+              <option value="Fire">Fire</option>
+              <option value="Water">Water</option>
+              <option value="Electric">Electric</option>
+              <option value="Grass">Grass</option>
+              <option value="Ice">Ice</option>
+              <option value="Ground">Ground</option>
+              <option value="Dark">Dark</option>
+              <option value="Psychic">Psychic</option>
+              <option value="Fighting">Fighting</option>
+              <option value="Dragon">Dragon</option>
+              <option value="Normal">Normal</option>
+            </select>
+          </div>
 
-          <button type="button" onclick="submitEdit()">Save Changes</button>
+          <button type="button" onclick="submitEdit()" class="modal-btn">
+            Save Changes
+          </button>
         </form>
       </div>
     </div>
 
+    <script>
+      function signOut() {
+        localStorage.clear();
+        window.location.href = "landing.html";
+      }
+
+      // Display username
+      document.addEventListener("DOMContentLoaded", function () {
+        const username = localStorage.getItem("username");
+        if (!username) {
+          window.location.href = "landing.html";
+        } else {
+          document.getElementById("userWelcome").textContent = `Welcome, ${username}!`;
+        }
+      });
+    </script>
     <script src="js/card-handler.js" defer></script>
   </body>
 </html>
