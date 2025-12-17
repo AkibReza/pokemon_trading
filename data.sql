@@ -44,6 +44,27 @@ CREATE TABLE UserPokemonCards (
     FOREIGN KEY (card_id) REFERENCES PokemonCards(id) ON DELETE CASCADE
 );
 
+-- Create UserDecks table to manage user decks with 6 slots
+CREATE TABLE UserDecks (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    slot1_card_id INT NULL,
+    slot2_card_id INT NULL,
+    slot3_card_id INT NULL,
+    slot4_card_id INT NULL,
+    slot5_card_id INT NULL,
+    slot6_card_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES pokemon_auth.Users(id) ON DELETE CASCADE,
+    FOREIGN KEY (slot1_card_id) REFERENCES UserPokemonCards(id) ON DELETE SET NULL,
+    FOREIGN KEY (slot2_card_id) REFERENCES UserPokemonCards(id) ON DELETE SET NULL,
+    FOREIGN KEY (slot3_card_id) REFERENCES UserPokemonCards(id) ON DELETE SET NULL,
+    FOREIGN KEY (slot4_card_id) REFERENCES UserPokemonCards(id) ON DELETE SET NULL,
+    FOREIGN KEY (slot5_card_id) REFERENCES UserPokemonCards(id) ON DELETE SET NULL,
+    FOREIGN KEY (slot6_card_id) REFERENCES UserPokemonCards(id) ON DELETE SET NULL
+);
+
 -- Insert Pokemon cards with prices based on their stats
 INSERT INTO PokemonCards (name, image_url, health, power, type, price) VALUES
     ("Abomasnow", "abomasnow.png", 82, 87, 'Grass', 170),
