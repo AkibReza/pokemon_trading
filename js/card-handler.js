@@ -61,6 +61,7 @@ function fetchCards(search = "", type = "", sort = "name") {
 function displayCards(cards) {
   const container = document.getElementById("cardContainer");
   const emptyState = document.getElementById("emptyState");
+  const userRole = localStorage.getItem("role");
   container.innerHTML = "";
 
   if (!cards || cards.length === 0) {
@@ -78,6 +79,25 @@ function displayCards(cards) {
       : "images/default.png";
 
     const typeClass = card.type ? card.type.toLowerCase() : "normal";
+
+    // Generate action buttons based on user role
+    let actionButtons = "";
+    if (userRole === "admin") {
+      actionButtons = `
+        <button onclick="editCard(${card.id})" class="action-btn edit-btn">
+          ✏️ Edit
+        </button>
+        <button onclick="deleteCard(${card.id})" class="action-btn delete-btn">
+          🗑️ Delete
+        </button>
+      `;
+    } else {
+      actionButtons = `
+        <button onclick="buyCard(${card.id})" class="action-btn buy-btn">
+          💰 Buy (${card.price || "0"} PC)
+        </button>
+      `;
+    }
 
     const cardElement = document.createElement("div");
     cardElement.className = `pokemon-card type-${typeClass}`;
@@ -103,17 +123,20 @@ function displayCards(cards) {
             <span class="stat-label">Power</span>
             <span class="stat-value">${card.power || "0"}</span>
           </div>
+          ${
+            userRole === "admin"
+              ? `
+          <div class="stat">
+            <span class="stat-label">Price</span>
+            <span class="stat-value">${card.price || "0"} PC</span>
+          </div>
+          `
+              : ""
+          }
         </div>
         
         <div class="card-actions">
-          <button onclick="editCard(${card.id})" class="action-btn edit-btn">
-            ✏️ Edit
-          </button>
-          <button onclick="deleteCard(${
-            card.id
-          })" class="action-btn delete-btn">
-            🗑️ Delete
-          </button>
+          ${actionButtons}
         </div>
       </div>
     `;
@@ -174,6 +197,7 @@ function editCard(cardId) {
   document.getElementById("editHealth").value = card.health;
   document.getElementById("editPower").value = card.power;
   document.getElementById("editType").value = card.type;
+  document.getElementById("editPrice").value = card.price;
 
   const modal = document.getElementById("editModal");
   modal.style.display = "block";
@@ -226,6 +250,7 @@ function submitEdit() {
     health: parseInt(document.getElementById("editHealth").value),
     power: parseInt(document.getElementById("editPower").value),
     type: document.getElementById("editType").value,
+    price: parseInt(document.getElementById("editPrice").value),
   };
 
   fetch("update_card.php", {
@@ -256,4 +281,32 @@ function submitEdit() {
       alert("Error updating card");
       console.error(error);
     });
+}
+
+function buyCard(cardId) {
+  if (confirm("Are you sure you want to purchase this card?")) {
+    fetch("purchase_card.php", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ card_id: cardId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          alert(data.message);
+          // Update PokeCoins in localStorage and UI
+          localStorage.setItem("pokecoins", data.new_pokecoins);
+          document.getElementById("pokecoinsValue").textContent =
+            data.new_pokecoins;
+          // Refresh cards display
+          fetchCards();
+        } else {
+          alert(data.message);
+        }
+      })
+      .catch((error) => {
+        alert("Error purchasing card");
+        console.error(error);
+      });
+  }
 }

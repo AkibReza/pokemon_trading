@@ -38,16 +38,40 @@ if ($stmt->num_rows > 0) {
 }
 $stmt->close();
 
-// Insert into database
-$insert_sql = "INSERT INTO Users (username, password, pokecoins) VALUES (?, ?, 100)";
-$stmt = $conn->prepare($insert_sql);
-$stmt->bind_param("ss", $signup_username, $signup_password);
+// Insert into database with default player role and 1000 PokeCoins
+try {
+    $insert_sql = "INSERT INTO Users (username, password, role, pokecoins) VALUES (?, ?, 'player', 1000)";
+    $stmt = $conn->prepare($insert_sql);
+    $stmt->bind_param("ss", $signup_username, $signup_password);
 
-if ($stmt->execute()) {
-    echo "New user created successfully. You can now <a href='authenticate.html?action=signin'>Sign In</a>";
-} else {
-    echo "Error: Could not create user. Please try again later.";
+    if ($stmt->execute()) {
+        echo "New user created successfully. You can now <a href='authenticate.html?action=signin'>Sign In</a>";
+    } else {
+        echo "Error: Could not create user. Please try again later.";
+    }
+    $stmt->close();
+
+} catch (mysqli_sql_exception $e) {
+    // Fallback for older schema without `role` column — try inserting with pokecoins only
+    try {
+        $insert_sql = "INSERT INTO Users (username, password, pokecoins) VALUES (?, ?, 1000)";
+        $stmt = $conn->prepare($insert_sql);
+        $stmt->bind_param("ss", $signup_username, $signup_password);
+
+        if ($stmt->execute()) {
+            echo "New user created successfully. You can now <a href='authenticate.html?action=signin'>Sign In</a>";
+        } else {
+            echo "Error: Could not create user. Please try again later.";
+        }
+        $stmt->close();
+
+    } catch (Exception $e2) {
+        // If both attempts fail, instruct the user to update the database schema
+        echo "Error: Database schema mismatch. Please import/update the database using data.sql.";
+    }
 }
+
+$conn->close();
 
 $stmt->close();
 $conn->close();

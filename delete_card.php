@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+// Check if user is logged in and is admin
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    die("Error: Only admin users can delete Pokemon cards.");
+}
+
 $servername = "localhost";
 $username = "root";
 $password = "";

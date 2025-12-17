@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+// Check if user is logged in and is admin
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    die("Error: Only admin users can add Pokemon cards.");
+}
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -17,6 +24,7 @@ $name = $_POST['name'];
 $health = $_POST['health'];
 $power = $_POST['power'];
 $type = $_POST['type'];
+$price = $_POST['price'];
 $image_url = '';
 
 // Handle image upload
@@ -51,8 +59,8 @@ if (isset($_FILES['image_file']) && $_FILES['image_file']['error'] == 0) {
 }
 
 // Prepare and bind
-$sql = $conn->prepare("INSERT INTO PokemonCards (name, image_url, health, power, type) VALUES (?, ?, ?, ?, ?)");
-$sql->bind_param("ssiis", $name, $image_url, $health, $power, $type);
+$sql = $conn->prepare("INSERT INTO PokemonCards (name, image_url, health, power, type, price) VALUES (?, ?, ?, ?, ?, ?)");
+$sql->bind_param("ssiisi", $name, $image_url, $health, $power, $type, $price);
 
 if ($sql->execute()) {
     echo "New card added successfully!";

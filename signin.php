@@ -28,8 +28,10 @@ if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     if ($signin_password === $row['password']) {
         $_SESSION['username'] = $signin_username;
+        $_SESSION['user_id'] = $row['id'];
         $_SESSION['pokecoins'] = $row['pokecoins'];
-        echo json_encode(['status' => 'success', 'username' => $signin_username, 'pokecoins' => $row['pokecoins']]);
+        $_SESSION['role'] = $row['role'];
+        echo json_encode(['status' => 'success', 'username' => $signin_username, 'pokecoins' => $row['pokecoins'], 'role' => $row['role']]);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Invalid password.']);
     }

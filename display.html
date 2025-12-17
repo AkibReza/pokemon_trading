@@ -15,7 +15,8 @@
         <h1 class="nav-logo">Pokémon Collection</h1>
         <div class="nav-actions">
           <span class="user-welcome" id="userWelcome"></span>
-          <button onclick="window.location.href='index.html'" class="nav-btn add-btn">
+          <span class="pokecoins-display" id="pokecoinsDisplay" style="margin-right: 15px; font-weight: bold; color: #ffd700;">💰 <span id="pokecoinsValue">0</span> PokeCoins</span>
+          <button id="addPokemonBtn" onclick="window.location.href='index.html'" class="nav-btn add-btn" style="display: none;">
             + Add Pokémon
           </button>
           <button onclick="signOut()" class="nav-btn signout-btn">
@@ -130,6 +131,11 @@
             </select>
           </div>
 
+          <div class="form-group">
+            <label for="editPrice">Price (PokeCoins):</label>
+            <input type="number" id="editPrice" min="1" required />
+          </div>
+
           <button type="button" onclick="submitEdit()" class="modal-btn">
             Save Changes
           </button>
@@ -143,13 +149,27 @@
         window.location.href = "landing.html";
       }
 
-      // Display username
+      // Display username and manage role-based UI
       document.addEventListener("DOMContentLoaded", function () {
         const username = localStorage.getItem("username");
+        const role = localStorage.getItem("role");
+        const pokecoins = localStorage.getItem("pokecoins");
+        
         if (!username) {
           window.location.href = "landing.html";
         } else {
           document.getElementById("userWelcome").textContent = `Welcome, ${username}!`;
+          document.getElementById("pokecoinsValue").textContent = pokecoins || "0";
+          
+          // Show Add Pokemon button only for admin
+          if (role === "admin") {
+            document.getElementById("addPokemonBtn").style.display = "inline-block";
+          }
+          
+          // Hide PokeCoins display for admin
+          if (role === "admin") {
+            document.getElementById("pokecoinsDisplay").style.display = "none";
+          }
         }
       });
     </script>

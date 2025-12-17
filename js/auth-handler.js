@@ -113,6 +113,7 @@ function handleSignIn() {
       if (data.status === "success") {
         localStorage.setItem("username", data.username);
         localStorage.setItem("pokecoins", data.pokecoins);
+        localStorage.setItem("role", data.role);
         window.location.href = "display.html"; // Redirect to display page
       } else {
         errorElement.textContent = data.message;

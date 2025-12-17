@@ -1,4 +1,11 @@
 <?php
+session_start();
+
+// Check if user is logged in and is admin
+if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'admin') {
+    die("Error: Only admin users can update Pokemon cards.");
+}
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -15,10 +22,11 @@ $name = $data['name'];
 $health = $data['health'];
 $power = $data['power'];
 $type = $data['type'];
+$price = $data['price'];
 
-$sql = "UPDATE PokemonCards SET name=?, health=?, power=?, type=? WHERE id=?";
+$sql = "UPDATE PokemonCards SET name=?, health=?, power=?, type=?, price=? WHERE id=?";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param('siisi', $name, $health, $power, $type, $id);
+$stmt->bind_param('siisii', $name, $health, $power, $type, $price, $id);
 
 if ($stmt->execute()) {
     echo "Card updated successfully!";
