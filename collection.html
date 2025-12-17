@@ -164,8 +164,12 @@
             <div class="nav-actions">
                 <span class="user-welcome" id="userWelcome"></span>
                 <span class="pokecoins-display" id="pokecoinsDisplay" style="margin-right: 15px; font-weight: bold; color: #ffd700;">💰 <span id="pokecoinsValue">0</span> PokeCoins</span>
+                <button id="music-toggle" class="music-btn" style="margin-right: 10px;">🔊</button>
                 <button onclick="window.location.href='display.html'" class="nav-btn">
                     Browse Cards
+                </button>
+                <button onclick="window.location.href='battle.html'" class="nav-btn">
+                    Battle
                 </button>
                 <button onclick="signOut()" class="nav-btn signout-btn">
                     Sign Out
@@ -209,6 +213,43 @@
             window.location.href = "landing.html";
         }
 
+        function initMusic() {
+            // Use global music manager
+            musicManager.setPage('collection');
+
+            const bgMusic = document.getElementById('bg-music');
+            const battleMusic = document.getElementById('battle-music');
+            const musicToggle = document.getElementById('music-toggle');
+
+            if (!bgMusic || !battleMusic || !musicToggle) {
+                console.error('Audio elements not found!');
+                return;
+            }
+
+            // Set sources
+            bgMusic.src = 'audio/background.mp3';
+            battleMusic.src = 'audio/Battle_Music.mp3';
+
+            // Preload audio
+            bgMusic.load();
+            battleMusic.load();
+
+            // Set initial mute state
+            bgMusic.muted = musicManager.isMuted;
+            battleMusic.muted = musicManager.isMuted;
+            musicToggle.textContent = musicManager.isMuted ? '🔇' : '🔊';
+
+            // Play background music
+            setTimeout(() => {
+                musicManager.playMusic('collection');
+            }, 500);
+
+            // Music toggle - instant on/off
+            musicToggle.addEventListener('click', function() {
+                musicManager.toggleMute();
+            });
+        }
+
         function showTab(tabName) {
             // This function is no longer needed since we removed tabs
         }
@@ -229,6 +270,7 @@
             // Load both deck and collection
             loadDeck();
             loadCollection();
+            initMusic();
         });
 
         function loadDeck() {
@@ -471,5 +513,10 @@
             }
         }
     </script>
+    <script src="js/music-manager.js"></script>
+
+    <!-- Audio elements -->
+    <audio id="bg-music" loop preload="auto"></audio>
+    <audio id="battle-music" loop preload="auto"></audio>
 </body>
 </html>

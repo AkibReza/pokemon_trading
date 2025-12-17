@@ -13,6 +13,8 @@
         <h1 class="nav-logo">Pokémon Collection</h1>
         <div class="nav-actions">
           <span class="user-welcome" id="userWelcome"></span>
+          <span class="pokecoins-display" id="pokecoinsDisplay" style="margin-right: 15px; font-weight: bold; color: #ffd700;">💰 <span id="pokecoinsValue">0</span> PokeCoins</span>
+          <button id="music-toggle" class="music-btn" style="margin-right: 10px;">🔊</button>
           <button onclick="window.location.href='display.html'" class="nav-btn">
             View Collection
           </button>
@@ -135,10 +137,13 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const username = localStorage.getItem("username");
+        const pokecoins = localStorage.getItem("pokecoins");
         if (!username) {
           window.location.href = "landing.html";
         } else {
           document.getElementById("userWelcome").textContent = `Welcome, ${username}!`;
+          document.getElementById("pokecoinsValue").textContent = pokecoins || "0";
+          initMusic();
         }
       });
 
@@ -161,7 +166,49 @@
           previewDiv.innerHTML = '';
         }
       }
+
+      function initMusic() {
+        // Use global music manager
+        musicManager.setPage('index');
+
+        const bgMusic = document.getElementById('bg-music');
+        const battleMusic = document.getElementById('battle-music');
+        const muteBtn = document.getElementById('music-toggle');
+
+        if (!bgMusic || !battleMusic || !muteBtn) {
+          console.error('Audio elements not found!');
+          return;
+        }
+
+        // Set sources
+        bgMusic.src = 'audio/background.mp3';
+        battleMusic.src = 'audio/Battle_Music.mp3';
+
+        // Preload audio
+        bgMusic.load();
+        battleMusic.load();
+
+        // Set initial mute state
+        bgMusic.muted = musicManager.isMuted;
+        battleMusic.muted = musicManager.isMuted;
+        muteBtn.textContent = musicManager.isMuted ? '🔇' : '🔊';
+
+        // Play background music
+        setTimeout(() => {
+          musicManager.playMusic('index');
+        }, 500);
+
+        // Music toggle - instant on/off
+        muteBtn.addEventListener('click', function() {
+          musicManager.toggleMute();
+        });
+      }
     </script>
+    <script src="js/music-manager.js"></script>
     <script src="js/form-handler.js"></script>
+
+    <!-- Audio elements -->
+    <audio id="bg-music" loop preload="auto"></audio>
+    <audio id="battle-music" loop preload="auto"></audio>
   </body>
 </html>

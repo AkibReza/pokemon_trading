@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle Arena</title>
+    <link rel="stylesheet" href="css/style-battle.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <h1 class="nav-logo">Pokémon Battle Arena</h1>
+            <div class="nav-actions">
+                <span class="user-welcome" id="userWelcome"></span>
+                <span class="pokecoins-display" id="pokecoinsDisplay" style="margin-right: 15px; font-weight: bold; color: #ffd700;">💰 <span id="pokecoinsValue">0</span> PokeCoins</span>
+                <button id="music-toggle" class="music-btn" style="margin-right: 10px;">🔊</button>
+                <button onclick="window.location.href='display.html'" class="nav-btn">
+                    Browse Cards
+                </button>
+                <button onclick="window.location.href='collection.html'" class="nav-btn">
+                    My Deck
+                </button>
+                <button onclick="signOut()" class="nav-btn signout-btn">
+                    Sign Out
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div id="game-setup" class="game-setup">
+            <h2>Battle Arena</h2>
+            <div id="user-deck-setup" class="deck-display">
+                <!-- User's deck cards will be loaded here -->
+            </div>
+            <button id="start-game" class="start-btn">Start Game</button>
+            <div class="game-hints">
+                <h3>How to Win:</h3>
+                <ul>
+                    <li>Choose cards with higher power for advantage</li>
+                    <li>Consider type matchups (Fire > Grass > Water > Fire)</li>
+                    <li>Manage your HP - cards with 0 HP are defeated</li>
+                    <li>Be the last player with cards remaining</li>
+                    <li>Winner gets 100 PokeCoins!</li>
+                </ul>
+                <h3>Rules:</h3>
+                <ul>
+                    <li>Each round, both players select a card</li>
+                    <li>Higher power deals damage equal to its own power</li>
+                    <li>Lower power takes damage equal to opponent's power</li>
+                    <li>Equal power: both take opponent's power damage</li>
+                    <li>Continue until one player has no cards left</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="battle-arena" class="battle-arena" style="display: none;">
+            <div class="battle-main">
+                <div class="bot-deck-section">
+                    <h3>Bot's Deck</h3>
+                    <div id="bot-deck-display" class="deck-display">
+                        <!-- Bot's remaining deck -->
+                    </div>
+                </div>
+
+                <div class="common-space">
+                    <div class="battle-slots">
+                        <div id="user-battle-slot" class="battle-slot empty">
+                            <p>Your Card</p>
+                        </div>
+                        <div class="vs">VS</div>
+                        <div id="bot-battle-slot" class="battle-slot empty">
+                            <p>Bot's Card</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="user-deck-section">
+                    <h3>Your Deck</h3>
+                    <div id="user-deck-display" class="deck-display">
+                        <!-- User's remaining deck -->
+                    </div>
+                </div>
+
+                <div class="battle-controls">
+                    <button id="next-round" class="next-btn" style="display: none;">Next Round</button>
+                    <div id="battle-result" class="battle-result" style="display: none;">
+                        <!-- Result -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="battle-info">
+                <div id="battle-log" class="battle-log">
+                    <h4>Battle Log</h4>
+                    <!-- Battle log entries will appear here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/battle-handler.js"></script>
+    <script src="js/music-manager.js"></script>
+
+    <!-- Audio elements -->
+    <audio id="bg-music" loop preload="auto"></audio>
+    <audio id="battle-music" loop preload="auto"></audio>
+</body>
+</html>
