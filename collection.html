@@ -275,18 +275,29 @@
 
         function loadDeck() {
             fetch('/pokemon_trading/fetch_user_deck.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        currentDeck = data.deck;
-                        renderDeck();
-                    } else {
-                        alert('Error loading deck: ' + data.message);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    try {
+                        const data = JSON.parse(text);
+                        if (data.status === 'success') {
+                            currentDeck = data.deck;
+                            renderDeck();
+                        } else {
+                            alert('Error loading deck: ' + data.message);
+                        }
+                    } catch (e) {
+                        console.error('Failed to parse deck response:', text);
+                        alert('Error loading deck: Server returned invalid response. Check console for details.');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error loading deck');
+                    console.error('Error loading deck:', error);
+                    alert('Error loading deck: ' + error.message);
                 });
         }
 
@@ -349,18 +360,29 @@
 
         function loadCollection() {
             fetch('/pokemon_trading/fetch_user_cards.php')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        currentUserCards = data.cards;
-                        renderCollection();
-                    } else {
-                        alert('Error loading collection: ' + data.message);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    try {
+                        const data = JSON.parse(text);
+                        if (data.status === 'success') {
+                            currentUserCards = data.cards;
+                            renderCollection();
+                        } else {
+                            alert('Error loading collection: ' + data.message);
+                        }
+                    } catch (e) {
+                        console.error('Failed to parse collection response:', text);
+                        alert('Error loading collection: Server returned invalid response. Check console for details.');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error loading collection');
+                    console.error('Error loading collection:', error);
+                    alert('Error loading collection: ' + error.message);
                 });
         }
 
@@ -469,19 +491,30 @@
                     ownership_id: ownershipId
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Automatically refresh the UI without alert
-                    loadDeck(); // Refresh deck display
-                    loadCollection(); // Refresh collection to show updated state
-                } else {
-                    alert('Error: ' + data.message);
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    if (data.status === 'success') {
+                        // Automatically refresh the UI without alert
+                        loadDeck(); // Refresh deck display
+                        loadCollection(); // Refresh collection to show updated state
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                } catch (e) {
+                    console.error('Failed to parse update deck response:', text);
+                    alert('Error updating deck: Server returned invalid response. Check console for details.');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('Error updating deck');
+                console.error('Error updating deck:', error);
+                alert('Error updating deck: ' + error.message);
             });
         }
 
@@ -497,18 +530,29 @@
                         ownership_id: null
                     })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        loadDeck(); // Refresh deck display
-                        loadCollection(); // Refresh collection
-                    } else {
-                        alert('Error: ' + data.message);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    try {
+                        const data = JSON.parse(text);
+                        if (data.status === 'success') {
+                            loadDeck(); // Refresh deck display
+                            loadCollection(); // Refresh collection
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    } catch (e) {
+                        console.error('Failed to parse remove from deck response:', text);
+                        alert('Error updating deck: Server returned invalid response. Check console for details.');
                     }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error updating deck');
+                    console.error('Error updating deck:', error);
+                    alert('Error updating deck: ' + error.message);
                 });
             }
         }
