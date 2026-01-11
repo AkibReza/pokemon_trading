@@ -10,44 +10,41 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$search = $_GET['search'] ?? '';  // Default to empty string
-$type = $_GET['type'] ?? '';      // Default to empty string
-$sort = $_GET['sort'] ?? 'name'; // Default sorting by 'name'
+$search = $_GET['search'] ?? '';
+$types = isset($_GET['types']) ? json_decode($_GET['types'], true) : [];
+$sort = $_GET['sort'] ?? 'name';
+$order = $_GET['order'] ?? 'asc';
 
 // Start building the query
-$sql = "SELECT * FROM PokemonCards WHERE name LIKE ?";  // Search by name
-$params = ['%' . $search . '%'];  // Initial parameter for search (searching by name)
+$sql = "SELECT * FROM PokemonCards WHERE name LIKE ?";
+$params = ['%' . $search . '%'];
+$paramTypes = 's';
 
-// If 'type' is provided and not empty, filter by type
-if (!empty($type)) {
-    $sql .= " AND type = ?";  // Add condition for type
-    $params[] = $type;  // Add 'type' to parameters
+// Handle multiple types filter
+if (!empty($types) && is_array($types)) {
+    $placeholders = implode(',', array_fill(0, count($types), '?'));
+    $sql .= " AND type IN ($placeholders)";
+    foreach ($types as $type) {
+        $params[] = $type;
+        $paramTypes .= 's';
+    }
 }
 
 // Sorting logic
-switch ($sort) {
-    case 'health':
-        $sql .= " ORDER BY health";
-        break;
-    case 'power':
-        $sql .= " ORDER BY power";
-        break;
-    case 'type':
-        $sql .= " ORDER BY type";
-        break;
-    case 'name':
-    default:
-        $sql .= " ORDER BY name";  // Default sorting by name
-}
+$validSorts = ['name', 'health', 'power', 'type', 'price'];
+$validOrders = ['asc', 'desc'];
+
+$sortColumn = in_array($sort, $validSorts) ? $sort : 'name';
+$sortOrder = in_array(strtolower($order), $validOrders) ? strtoupper($order) : 'ASC';
+
+$sql .= " ORDER BY $sortColumn $sortOrder";
 
 // Prepare and execute the query
 $stmt = $conn->prepare($sql);
 
 // Bind parameters dynamically
-if (count($params) > 1) {
-    $stmt->bind_param(str_repeat('s', count($params)), ...$params);  // Bind multiple params if 'type' is used
-} else {
-    $stmt->bind_param('s', $params[0]);  // Bind only the search parameter if no 'type' is provided
+if (count($params) > 0) {
+    $stmt->bind_param($paramTypes, ...$params);
 }
 
 $stmt->execute();
@@ -55,10 +52,10 @@ $result = $stmt->get_result();
 
 $cards = [];
 while ($row = $result->fetch_assoc()) {
-    $cards[] = $row;  // Fetch the rows into an array
+    $cards[] = $row;
 }
 
-echo json_encode($cards);  // Return the filtered results as JSON
+echo json_encode($cards);
 
 $stmt->close();
 $conn->close();

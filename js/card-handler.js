@@ -12,6 +12,15 @@ document.addEventListener("DOMContentLoaded", function () {
     applyFiltersBtn.addEventListener("click", applyFilters);
   }
 
+  // Event listener for Clear Filters button
+  const clearFiltersBtn = document.getElementById("clearFiltersBtn");
+  if (clearFiltersBtn) {
+    clearFiltersBtn.addEventListener("click", clearFilters);
+  }
+
+  // Restore filters from localStorage
+  restoreFilters();
+
   // Fetch and display cards initially
   fetchCards();
 });
@@ -19,14 +28,63 @@ document.addEventListener("DOMContentLoaded", function () {
 // Apply filters based on input values
 function applyFilters() {
   const searchInput = document.getElementById("searchInput").value.trim();
-  const typeFilter = document.getElementById("typeFilter").value;
+  const selectedTypes = Array.from(
+    document.querySelectorAll(".type-checkbox:checked")
+  ).map((cb) => cb.value);
   const sortOption = document.getElementById("sortOption").value;
-  fetchCards(searchInput, typeFilter, sortOption);
+  const sortOrder = document.getElementById("sortOrder").value;
+
+  // Save filters to localStorage
+  saveFilters(searchInput, selectedTypes, sortOption, sortOrder);
+
+  fetchCards(searchInput, selectedTypes, sortOption, sortOrder);
+}
+
+// Clear all filters
+function clearFilters() {
+  document.getElementById("searchInput").value = "";
+  document
+    .querySelectorAll(".type-checkbox")
+    .forEach((cb) => (cb.checked = false));
+  document.getElementById("sortOption").value = "name";
+  document.getElementById("sortOrder").value = "asc";
+
+  localStorage.removeItem("pokemonFilters");
+  fetchCards();
+}
+
+// Save filters to localStorage
+function saveFilters(search, types, sort, order) {
+  const filters = {
+    search: search,
+    types: types,
+    sort: sort,
+    order: order,
+  };
+  localStorage.setItem("pokemonFilters", JSON.stringify(filters));
+}
+
+// Restore filters from localStorage
+function restoreFilters() {
+  const savedFilters = localStorage.getItem("pokemonFilters");
+  if (savedFilters) {
+    const filters = JSON.parse(savedFilters);
+
+    document.getElementById("searchInput").value = filters.search || "";
+    document.getElementById("sortOption").value = filters.sort || "name";
+    document.getElementById("sortOrder").value = filters.order || "asc";
+
+    if (filters.types && filters.types.length > 0) {
+      document.querySelectorAll(".type-checkbox").forEach((cb) => {
+        cb.checked = filters.types.includes(cb.value);
+      });
+    }
+  }
 }
 
 // Fetch and display cards based on filters
 let allCards = [];
-function fetchCards(search = "", type = "", sort = "name") {
+function fetchCards(search = "", types = [], sort = "name", order = "asc") {
   const url = "/pokemon_trading/fetch_cards.php";
   const params = new URLSearchParams();
 
@@ -34,11 +92,12 @@ function fetchCards(search = "", type = "", sort = "name") {
     params.append("search", search);
   }
 
-  if (type.trim() !== "") {
-    params.append("type", type);
+  if (Array.isArray(types) && types.length > 0) {
+    params.append("type", types.join(","));
   }
 
   params.append("sort", sort);
+  params.append("order", order);
 
   fetch(url + "?" + params.toString())
     .then((response) => {
@@ -73,7 +132,7 @@ function displayCards(cards) {
   container.style.display = "grid";
   emptyState.style.display = "none";
 
-  cards.forEach((card, index) => {
+  cards.forEach((card) => {
     const imagePath = card.image_url
       ? `images/${card.image_url}`
       : "images/default.png";
@@ -85,15 +144,20 @@ function displayCards(cards) {
     if (userRole === "admin") {
       actionButtons = `
         <button onclick="editCard(${card.id})" class="action-btn edit-btn">
-          ✏️ Edit
+          Edit
         </button>
         <button onclick="deleteCard(${card.id})" class="action-btn delete-btn">
-          🗑️ Delete
+          Delete
         </button>
       `;
     } else {
+      const escapedName = card.name.replace(/'/g, "\\'");
       actionButtons = `
-        <button onclick="buyCard(${card.id})" class="action-btn buy-btn">
+        <button onclick="openBuyModal(${
+          card.id
+        }, '${escapedName}', '${imagePath}', ${
+        card.price || 0
+      })" class="action-btn buy-btn">
           💰 Buy (${card.price || "0"} PC)
         </button>
       `;
@@ -144,7 +208,7 @@ function displayCards(cards) {
     container.appendChild(cardElement);
   });
 
-  // Animate cards entrance with anime.js
+  // Animate all cards at once
   anime({
     targets: ".pokemon-card",
     scale: [0.8, 1],
@@ -283,30 +347,101 @@ function submitEdit() {
     });
 }
 
-function buyCard(cardId) {
-  if (confirm("Are you sure you want to purchase this card?")) {
-    fetch("purchase_card.php", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ card_id: cardId }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.status === "success") {
+// Buy modal functions
+let pendingBuyCardId = null;
+
+function openBuyModal(cardId, cardName, cardImage, cardPrice) {
+  pendingBuyCardId = cardId;
+  const userBalance = parseInt(localStorage.getItem("pokecoins") || "0");
+  const afterBalance = userBalance - cardPrice;
+
+  document.getElementById("buyCardImage").src = cardImage;
+  document.getElementById("buyCardName").textContent = cardName;
+  document.getElementById("buyCardPrice").textContent =
+    cardPrice + " PokeCoins";
+  document.getElementById("buyUserBalance").textContent =
+    userBalance + " PokeCoins";
+  document.getElementById("buyAfterBalance").textContent =
+    afterBalance + " PokeCoins";
+  document.getElementById("buyAfterBalance").style.color =
+    afterBalance < 0 ? "#e74c3c" : "#27ae60";
+
+  const modal = document.getElementById("buyModal");
+  modal.style.display = "block";
+
+  // Animate modal entrance
+  anime({
+    targets: ".buy-modal-content",
+    scale: [0.8, 1],
+    opacity: [0, 1],
+    duration: 400,
+    easing: "easeOutQuad",
+  });
+}
+
+function closeBuyModal() {
+  const modal = document.getElementById("buyModal");
+  anime({
+    targets: ".buy-modal-content",
+    scale: [1, 0.8],
+    opacity: [1, 0],
+    duration: 300,
+    easing: "easeInQuad",
+    complete: function () {
+      modal.style.display = "none";
+      pendingBuyCardId = null;
+    },
+  });
+}
+
+function confirmBuyCard() {
+  if (!pendingBuyCardId) return;
+
+  fetch("purchase_card.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ card_id: pendingBuyCardId }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "success") {
+        // Update PokeCoins in localStorage and UI
+        localStorage.setItem("pokecoins", data.new_pokecoins);
+        document.getElementById("pokecoinsValue").textContent =
+          data.new_pokecoins;
+
+        closeBuyModal();
+
+        // Show success message
+        setTimeout(() => {
           alert(data.message);
-          // Update PokeCoins in localStorage and UI
-          localStorage.setItem("pokecoins", data.new_pokecoins);
-          document.getElementById("pokecoinsValue").textContent =
-            data.new_pokecoins;
-          // Refresh cards display
-          fetchCards();
+        }, 300);
+
+        // Restore and reapply filters instead of basic refresh
+        const savedFilters = localStorage.getItem("pokemonFilters");
+        if (savedFilters) {
+          const filters = JSON.parse(savedFilters);
+          fetchCards(
+            filters.search || "",
+            filters.types || [],
+            filters.sort || "name",
+            filters.order || "asc"
+          );
         } else {
-          alert(data.message);
+          fetchCards();
         }
-      })
-      .catch((error) => {
+      } else {
+        closeBuyModal();
+        setTimeout(() => {
+          alert(data.message);
+        }, 300);
+      }
+    })
+    .catch((error) => {
+      closeBuyModal();
+      setTimeout(() => {
         alert("Error purchasing card");
-        console.error(error);
-      });
-  }
+      }, 300);
+      console.error(error);
+    });
 }

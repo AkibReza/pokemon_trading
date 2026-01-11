@@ -40,28 +40,49 @@
           <input 
             type="text" 
             id="searchInput" 
-            placeholder="🔍 Search by name..." 
+            placeholder="Search by name..." 
             class="search-input"
           />
         </div>
         
         <div class="filter-controls">
           <div class="filter-group">
-            <label>Type:</label>
-            <select id="typeFilter" class="filter-select">
-              <option value="">All Types</option>
-              <option value="Fire">🔥 Fire</option>
-              <option value="Water">💧 Water</option>
-              <option value="Electric">⚡ Electric</option>
-              <option value="Grass">🌿 Grass</option>
-              <option value="Ice">❄️ Ice</option>
-              <option value="Ground">🏔️ Ground</option>
-              <option value="Dark">🌑 Dark</option>
-              <option value="Psychic">🔮 Psychic</option>
-              <option value="Fighting">🥊 Fighting</option>
-              <option value="Dragon">🐉 Dragon</option>
-              <option value="Normal">⭐ Normal</option>
-            </select>
+            <label>Type (select multiple):</label>
+            <div class="type-checkboxes">
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Fire"> Fire
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Water"> Water
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Electric"> Electric
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Grass"> Grass
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Ice"> Ice
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Ground"> Ground
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Dark"> Dark
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Psychic"> Psychic
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Fighting"> Fighting
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Dragon"> Dragon
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="type-checkbox" value="Normal"> Normal
+              </label>
+            </div>
           </div>
           
           <div class="filter-group">
@@ -70,11 +91,21 @@
               <option value="name">Name</option>
               <option value="health">Health</option>
               <option value="power">Power</option>
+              <option value="price">Price</option>
               <option value="type">Type</option>
             </select>
           </div>
           
+          <div class="filter-group">
+            <label>Order:</label>
+            <select id="sortOrder" class="filter-select">
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+          
           <button id="applyFiltersBtn" class="apply-btn">Apply Filters</button>
+          <button id="clearFiltersBtn" class="clear-btn">Clear Filters</button>
         </div>
       </div>
 
@@ -85,7 +116,12 @@
 
       <!-- Empty State -->
       <div class="empty-state" id="emptyState" style="display: none;">
-        <div class="empty-icon">📦</div>
+        <svg class="empty-icon" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="80" fill="#f0f2f5" stroke="#667eea" stroke-width="4"/>
+          <path d="M70 90 Q100 70 130 90" stroke="#667eea" stroke-width="4" fill="none"/>
+          <circle cx="80" cy="85" r="8" fill="#667eea"/>
+          <circle cx="120" cy="85" r="8" fill="#667eea"/>
+        </svg>
         <h2>No Pokémon Cards Found</h2>
         <p>Start building your collection by adding new Pokémon cards!</p>
         <button onclick="window.location.href='index.html'" class="empty-btn">
@@ -225,5 +261,40 @@
     <!-- Audio elements -->
     <audio id="bg-music" loop preload="auto"></audio>
     <audio id="battle-music" loop preload="auto"></audio>
+
+    <!-- Buy Confirmation Modal -->
+    <div id="buyModal" class="modal">
+      <div class="modal-content buy-modal-content">
+        <div class="modal-header">
+          <h2>Confirm Purchase</h2>
+          <span class="close" onclick="closeBuyModal()">&times;</span>
+        </div>
+        <div class="buy-modal-body">
+          <div class="buy-card-preview">
+            <img id="buyCardImage" src="" alt="" class="buy-preview-image">
+            <h3 id="buyCardName"></h3>
+          </div>
+          <div class="buy-details">
+            <p class="buy-info">Are you sure you want to purchase this card?</p>
+            <div class="buy-price-info">
+              <span class="price-label">Price:</span>
+              <span class="price-value" id="buyCardPrice"></span>
+            </div>
+            <div class="buy-balance-info">
+              <span class="balance-label">Your Balance:</span>
+              <span class="balance-value" id="buyUserBalance"></span>
+            </div>
+            <div class="buy-after-info">
+              <span class="after-label">Balance After:</span>
+              <span class="after-value" id="buyAfterBalance"></span>
+            </div>
+          </div>
+          <div class="buy-modal-actions">
+            <button onclick="confirmBuyCard()" class="confirm-buy-btn">Confirm Purchase</button>
+            <button onclick="closeBuyModal()" class="cancel-buy-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
